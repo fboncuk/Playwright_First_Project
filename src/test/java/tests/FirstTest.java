@@ -1,36 +1,12 @@
 package tests;
 
 import com.microsoft.playwright.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class FirstTest {
-
-    Playwright playwright = Playwright.create();
-    Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-    Page page;
-
-    @BeforeEach
-    public void setup() {
-        // Playwright engine başlatılır (tarayıcıları kontrol eden sistem)
-        playwright = Playwright.create();
-
-        // Chromium (Chrome’un motoru) açılır
-        // Headless false olduğu için ekranda Chrome açılır
-        // Eğer true olsaydı browser arka planda çalışacaktı
-        browser = playwright.chromium()
-                .launch(new BrowserType.LaunchOptions().setHeadless(false));
-        //BrowserContext browserContext = browser.newContext(
-        //        new Browser.NewContextOptions().setPermissions(Arrays.asList("geolocation"))
-        //);
-
-        // Yeni bir sekme (tab) açılır
-        page = browser.newPage();
-    }
+public class FirstTest extends PlaywrightRunner {
 
     @Test
-    public void firstTest () throws InterruptedException {
+    public void firstTest() throws InterruptedException {
 
         // Sekme zaten açılmıştı. Bu sekmede Google açılır
         page.navigate("https://www.bestbuy.com/?intl=nosplash");
@@ -51,14 +27,5 @@ public class FirstTest {
             Thread.sleep(3000);
         }
 
-
-
-
-    }
-
-    @AfterEach
-    public void tearDown() {
-        browser.close();
-        playwright.close();
     }
 }

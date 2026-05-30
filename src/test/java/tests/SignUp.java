@@ -1,33 +1,15 @@
 package tests;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.AriaRole;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.microsoft.playwright.assertions.LocatorAssertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-public class SignUp {
-
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-        Page page;
-
-    @BeforeEach
-    public void setup() {
-        playwright = Playwright.create();
-        browser = playwright.chromium()
-                .launch(new BrowserType.LaunchOptions().setHeadless(false).setArgs(Arrays.asList("--start-maximized")));
-        BrowserContext context = browser.newContext(
-                new Browser.NewContextOptions().setViewportSize(null)
-        );
-        //page = browser.newPage();
-        page = context.newPage();
-    }
+public class SignUp extends PlaywrightRunner{
 
     @Test
-    public void firstTest () throws InterruptedException {
+    public void signUpTest () throws InterruptedException {
 
         page.navigate("https://www.bestbuy.com/?intl=nosplash");
         page.locator("[class='flex justify-start font-400 text-3 leading-3 text-brand-tech-white']").click();
@@ -35,22 +17,29 @@ public class SignUp {
         page.locator("[data-testid='createAccountButton']").click();
         Thread.sleep(1000);
 
-        Thread.sleep(1000);
         page.getByLabel("First Name").fill("Fatih");
         page.getByLabel("Last Name").fill("Boncuk");
         page.getByLabel("Email Address").fill("myworkemail@gmail.com");
         Thread.sleep(1000);
-        page.locator("#show-hide-password-toggle").click();
-        page.locator("#fld-p1").fill("Benbir. P@55w0rdum");
+        page.locator("button#show-hide-password-toggle").click();
+        page.locator("input#fld-p1").fill("Benbir. P@55w0rdum");
         Thread.sleep(1000);
-        page.locator("#show-hide-reenter-password-toggle").click();
-        page.locator("#reenterPassword").fill("Benbir. P@55w0rdum");
+        page.locator("button#show-hide-reenter-password-toggle").click();
+        page.locator("input#reenterPassword").fill("Benbir. P@55w0rdum");
         Thread.sleep(1000);
+
+        assertThat(page.locator("span.cdi-input-success-message"))
+                .containsText("Your passwords match!");
+
+        // youtube videoda timeout da eklenmiş ama gereksiz
+        //assertThat(page.locator("span.cdi-input-success-message"))
+        //        .containsText("Your passwords match!",new LocatorAssertions.ContainsTextOptions().setTimeout(30000));
+
         page.locator("#phone").fill("1239876543");
-        page.locator("#is-recovery-phone").check();
+        page.locator("input#is-recovery-phone").check();
         Thread.sleep(2000);
 
-
+        assertThat(page.locator("span.c-checkbox-brand")).isEnabled();
 
         // LOCATOR ÖRNEKLERİ (Aynı kutuya isim girişi yapılması gerekiyor)
         // 1. getByRole
@@ -87,13 +76,6 @@ public class SignUp {
         //page.locator("//input[@id='firstName']").fill("Fatih");
 
 
-    }
-
-
-    @AfterEach
-    public void tearDown() {
-        browser.close();
-        playwright.close();
     }
 
 }
