@@ -3,43 +3,58 @@ package tests;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import org.junit.jupiter.api.Test;
+import pages.CreateAccountPage;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class SignUp extends PlaywrightRunner{
 
+
     @Test
     public void signUpTest () throws InterruptedException {
 
+        CreateAccountPage createAccountPage = new CreateAccountPage(page);
+
+        // Browser sayfasında işlem yapılır
         page.navigate("https://www.bestbuy.com/?intl=nosplash");
         page.locator("[class='flex justify-start font-400 text-3 leading-3 text-brand-tech-white']").click();
-        Thread.sleep(1000);
         page.locator("[data-testid='createAccountButton']").click();
         Thread.sleep(1000);
 
-        page.getByLabel("First Name").fill("Fatih");
-        page.getByLabel("Last Name").fill("Boncuk");
-        page.getByLabel("Email Address").fill("myworkemail@gmail.com");
-        Thread.sleep(1000);
-        page.locator("button#show-hide-password-toggle").click();
-        page.locator("input#fld-p1").fill("Benbir. P@55w0rdum");
-        Thread.sleep(1000);
-        page.locator("button#show-hide-reenter-password-toggle").click();
-        page.locator("input#reenterPassword").fill("Benbir. P@55w0rdum");
-        Thread.sleep(1000);
+        // CreateAccountPage sayfasındaki metotlar ile işlem yapılır
+        createAccountPage.fillFirstName("BenimAdim");
+        createAccountPage.fillLastName("BenimSoyadim");
+        createAccountPage.fillEmail("BenimEmail@adresim.com");
+        Thread.sleep(2000);
+
+        createAccountPage.fillpassword1("Pa55w0rd.* 111");
+        createAccountPage.clickViewBox1();
+        Thread.sleep(2000);
+
+        createAccountPage.fillpassword2("Pa55w0rd.* 111");
+        createAccountPage.clickViewBox2();
+        Thread.sleep(2000);
 
         assertThat(page.locator("span.cdi-input-success-message"))
                 .containsText("Your passwords match!");
 
-        // youtube videoda timeout da eklenmiş ama gereksiz
-        //assertThat(page.locator("span.cdi-input-success-message"))
-        //        .containsText("Your passwords match!",new LocatorAssertions.ContainsTextOptions().setTimeout(30000));
-
-        page.locator("#phone").fill("1239876543");
-        page.locator("input#is-recovery-phone").check();
+        createAccountPage.fillPhone("0613026899");
+        Thread.sleep(2000);
+        createAccountPage.setPhoneCheckBox();
         Thread.sleep(2000);
 
-        assertThat(page.locator("span.c-checkbox-brand")).isEnabled();
+        System.out.println(page.locator("#is-recovery-phone").isChecked());
+
+        createAccountPage.clickCreateAccount();
+        Thread.sleep(2000);
+
+
+
+
+
+
+
+
 
         // LOCATOR ÖRNEKLERİ (Aynı kutuya isim girişi yapılması gerekiyor)
         // 1. getByRole
